@@ -1,0 +1,24 @@
+ID: anubhavxsa
+_schema-version: '2.1'
+description: My hana xsa project
+version: 0.0.1
+modules:
+  - name: db2
+    type: hdb
+    path: db2
+    requires:
+      - name: hdi_db2
+  - name: db
+    type: hdb
+    path: db
+    requires:
+      - name: hdi_db
+resources:
+  - name: hdi_db
+    properties:
+      hdi-container-name: '${service-name}'
+    type: com.sap.xs.hdi-container
+  - name: hdi_db2
+    properties:
+      hdi-container-name_2: '${service-name}'
+    type: com.sap.xs.hdi-container

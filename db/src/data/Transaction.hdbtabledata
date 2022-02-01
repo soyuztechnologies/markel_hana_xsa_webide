@@ -1,0 +1,111 @@
+{
+	"format_version": 1,
+	"imports": [{
+			"target_table": "Transaction.PurchaseOrder",
+			"source_data": {
+				"data_type": "CSV",
+				"file_name": "purchaseOrder.csv",
+				"has_header": true
+			},
+			"import_settings": {
+				"include_filter": [],
+				"import_columns": [
+					"PURCHASEORDERID",
+					"HISTORY.CREATEDBY.EMPLOYEEID",
+					"HISTORY.CREATEDAT",
+					"HISTORY.CHANGEDBY.EMPLOYEEID",
+					"HISTORY.CHANGEDAT",
+					"NOTEID",
+					"PARTNER.PARTNERID",
+					"CURRENCY",
+					"GROSSAMOUNT",
+					"NETAMOUNT",
+					"TAXAMOUNT",
+					"LIFECYCLESTATUS",
+					"APPROVALSTATUS",
+					"CONFIRMSTATUS",
+					"ORDERINGSTATUS",
+					"INVOICINGSTATUS"
+				]
+			}
+		},
+		{
+			"target_table": "Transaction.PurchaseOrderItems",
+			"source_data": {
+				"data_type": "CSV",
+				"file_name": "purchaseOrderItem.csv",
+				"has_header": true
+			},
+			"import_settings": {
+				"include_filter": [],
+				"import_columns": [
+					"NOTEID",
+					"CURRENCY",
+					"GROSSAMOUNT",
+					"NETAMOUNT",
+					"TAXAMOUNT",
+					"QUANTITY",
+					"QUANTITYUNIT",
+					"DELIVERYDATE",
+					"HEADER.PURCHASEORDERID",
+					"PURCHASEORDERITEM",
+					"PRODUCT.PRODUCTID"
+				]
+			}
+		},
+		{
+			"target_table": "Transaction.SalesOrder",
+			"source_data": {
+				"data_type": "CSV",
+				"file_name": "salesOrder.csv",
+				"has_header": true
+			},
+			"import_settings": {
+				"include_filter": [
+				],
+				"import_columns": [
+					"SALESORDERID",
+					"HISTORY.CREATEDBY.EMPLOYEEID",
+					"HISTORY.CREATEDAT",
+					"HISTORY.CHANGEDBY.EMPLOYEEID",
+					"HISTORY.CHANGEDAT",
+					"NOTEID",
+					"PARTNER.PARTNERID",
+					"CURRENCY",
+					"GROSSAMOUNT",
+					"NETAMOUNT",
+					"TAXAMOUNT",
+					"LIFECYCLESTATUS",
+					"BILLINGSTATUS",
+					"DELIVERYSTATUS"					
+				]
+			}
+		},
+		{
+			"target_table": "Transaction.SalesOrderItems",
+			"source_data": {
+				"data_type": "CSV",
+				"file_name": "salesOrderItem.csv",
+				"has_header": true
+			},
+			"import_settings": {
+				"include_filter": [],
+				"import_columns": [
+					"NOTEID",
+					"CURRENCY",
+					"GROSSAMOUNT",
+					"NETAMOUNT",
+					"TAXAMOUNT",
+					"QUANTITY",
+					"QUANTITYUNIT",
+					"DELIVERYDATE",
+					"HEADER.SALESORDERID",
+					"SALESORDERITEM",
+					"PRODUCT.PRODUCTID",
+					"ITEMATPSTATUS",
+					"OPITEMPOS"
+				]
+			}
+		}
+	]
+}

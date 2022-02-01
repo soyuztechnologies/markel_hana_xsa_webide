@@ -1,0 +1,38 @@
+{
+	"format_version": 1,
+	"imports": [{
+		"target_table": "App.Users",
+		"source_data": {
+			"data_type": "CSV",
+			"file_name": "Users.csv",
+			"has_header": true
+		},
+		"import_settings": {
+			"include_filer": [],
+			"import_columns": [
+				"ID",
+				"FIRSTNAME",
+				"LASTNAME",
+				"GENDER",
+				"EMAIL",
+				"PHONE",
+				"PASSWORD",
+				"COUNTRY.CODE"
+			]
+		}
+	}, {
+		"target_table": "App.Country",
+		"source_data": {
+			"data_type": "CSV",
+			"file_name": "Country.csv",
+			"has_header": true
+		},
+		"import_settings": {
+			"include_filer": [],
+			"import_columns": [
+				"CODE", "NAME"
+			]
+		}
+	}]
+
+}

@@ -1,0 +1,102 @@
+namespace abxsa.models;
+
+using MasterData as MD;
+using Transaction as TR;
+
+
+context CDSViews {
+	view "NewView" as select from TR.SalesOrder{
+		SALESORDERID as SOId,
+		GROSSAMOUNT as GrossAmount,
+		CURRENCY AS CurrencyCode
+	};
+	
+	// view "FlightView" as select from SBOOK as sb
+	// inner join SFLIGHT as sp on 
+	// sb.carrid = sp.carrid and 
+	// sb.connid = sp.connid and 
+	// sb.fldate = sp.fldate
+	// {
+		
+	// 	sb.CARRID,
+	// 	sb.CONNID,
+	// 	sb.FLDATE,
+	// 	sb.BOOKID,
+	// 	sb.LUGGWEIGHT,
+	// 	sb.COUNTER,
+	// 	sp.PRICE,
+	// 	sp.CURRENCY,
+	// 	sp.SEATSMAX
+		
+	// };
+	
+	view "BusinessPartner" as select from MD.Partner{
+		PARTNERID as BPId,
+		PARTNERROLE as BPRole,
+		COMPANYNAME as Company
+	} where CURRENCY = 'USD';
+	
+	view "POrders" as select from TR.PurchaseOrder{
+		PURCHASEORDERID as OrderId,
+		PARTNER.PARTNERID as SupplierId,
+		CURRENCY as CurrencyCode,
+		GROSSAMOUNT as GrossAmount,
+		NETAMOUNT as NetAmount,
+		TAXAMOUNT as TaxAmount,
+		LIFECYCLESTATUS as Status
+	};
+	
+	view "OrderStatus" as select from "POrders"{
+		case Status
+			when 'P' then 'Paid'
+			when 'R' then 'Rejected'
+			when 'C' then 'Confirmed'
+			when 'N' then 'New'
+			when 'X' then 'Cancelled'
+			end as Status,
+		count(OrderId) as NoOfOrders,
+		sum(GrossAmount) as TotalAmount
+	} group by Status;
+	
+	view "SupplierOrderItems" as select from TR.PurchaseOrderItems mixin {
+		product: association[1] to MD.Product on product.PRODUCTID = $projection.ProductId;
+	} INTO {
+		key HEADER.PURCHASEORDERID AS OrderId,
+		key PURCHASEORDERITEM as ItemNo,
+		PRODUCT.PRODUCTID as ProductId,
+		GROSSAMOUNT as GrossAmount,
+		CURRENCY as CurrencyCode,
+		QUANTITY as Quantity,
+		QUANTITYUNIT as QuantityUnit,
+		product
+	};
+	
+	view "SupplierOrders" as select from POrders mixin {
+		items: association[1..*] to SupplierOrderItems on items.OrderId = $projection.OrderId;
+		supplier: association[1] to MD.Partner on supplier.PARTNERID = $projection.SupplierId;
+	} into {
+		OrderId,
+		SupplierId,
+		GrossAmount,
+		Status,
+		items,
+		supplier
+	};
+	
+	view "ConsumptionView" as select from SupplierOrders{
+		supplier.COMPANYNAME as CompanyName,
+		items.GrossAmount,
+		items.CurrencyCode,
+		items.Quantity,
+		items.QuantityUnit,
+		items.product[CATEGORY = 'Others'].PRODUCTID,
+		items.product.PRICE as Price,
+		ceil(items.product.PRICE * items.Quantity) as CalculatedPrice
+		
+	};
+	
+};
+
+
+
+

@@ -1,0 +1,25 @@
+{
+  "role": {
+    "name": "R_USERVIEW",
+    "schema_privileges": [
+      {
+        "privileges": [
+          "SELECT",
+          "SELECT METADATA",
+          "SELECT CDS METADATA",
+          "INSERT",
+          "DELETE",
+          "UPDATE",
+          "CREATE TEMPORARY TABLE"
+        ]
+      }
+    ],
+    "schema_analytic_privileges": [
+      {
+        "privileges": [
+          "SP_USER_IN"
+        ]
+      }
+    ]
+  }
+}

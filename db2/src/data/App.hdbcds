@@ -1,0 +1,41 @@
+/*@@layout{"layoutInfo":{"x":-3,"y":-102}}*/
+context App {
+
+    /*@@layout{"layoutInfo":{"x":-1089.5,"y":-301}}*/
+    type TName : String(255);
+
+    /*@@layout{"layoutInfo":{"x":-1044,"y":-250.5}}*/
+    entity Users {
+        key ID        : String(10) not null;
+            FIRSTNAME : App.TName;
+            LASTNAME  : App.TName;
+            GENDER    : String(6);
+            EMAIL     : String(60);
+            PHONE     : String(40);
+            PASSWORD  : String(16);
+            COUNTRY   : association[1, 0..1] to App.Country { CODE };
+    };
+
+    /*@@layout{"layoutInfo":{"x":-1353,"y":-250.5}}*/
+    entity Country {
+        key CODE : String(2);
+            NAME : String(60);
+    };
+
+    define view CDSUser as
+        select from Users
+        {
+            FIRSTNAME,
+            LASTNAME,
+            EMAIL,
+            COUNTRY.NAME
+        };
+
+    /*@@layout{"layoutInfo":{"x":-571,"y":-259.5}}*/
+    entity Monuments {
+        key ID        : String(10) not null;
+            Name      : String(250);
+            Location  : String(80);
+            SinceWhen : Integer64;
+    };
+};
