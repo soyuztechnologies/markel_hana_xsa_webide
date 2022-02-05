@@ -1,22 +1,16 @@
 {
   "role": {
-    "name": "default_access_role",
+    "name": "User",
     "schema_privileges": [
       {
         "privileges": [
+          "CREATE TEMPORARY TABLE",
+          "DELETE",
+          "INSERT",
           "SELECT",
           "SELECT METADATA",
           "SELECT CDS METADATA",
-          "INSERT",
-          "DELETE",
           "UPDATE"
-        ]
-      }
-    ],
-    "schema_roles": [
-      {
-        "names": [
-          "R_USERVIEW"
         ]
       }
     ]

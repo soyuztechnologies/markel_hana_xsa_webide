@@ -1,0 +1,27 @@
+FUNCTION "SalesTransactionRank"(
+								I_FR_DATE date, I_TO_DATE date, I_REGION NVARCHAR(4)
+)
+       RETURNS table (
+       					companyname nvarchar(80),
+       					region nvarchar(4),
+       					ord_count integer,
+       					scnt_rank integer,
+       					scnt_dense_rank integer
+       )
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN 
+    return select companyname, region, ord_count, scnt_rank, scnt_dense_rank from
+		( select 
+				t2.companyname, t3.region, count(t0.salesorderid) as ord_count,
+				rank() over (PARTITION BY region order by count(t0.salesorderid) desc) as scnt_rank,
+				dense_rank() over (PARTITION BY region order by count(t0.salesorderid) desc) as scnt_dense_rank
+		    from "Transaction.SalesOrder" as t0
+		    inner join "Transaction.SalesOrderItems" as t1 on  t0.salesorderid = t1."HEADER.SALESORDERID"
+		    INNER JOIN "MasterData.Partner" as t2 on t0."PARTNER.PARTNERID" = t2.PARTNERID
+		    inner join "MasterData.Address" as t3 on t2."ADDRESSES.ADDRESSID" = t3.ADDRESSID
+		    where t3.region = :I_REGION and TO_DATE(t1."DELIVERYDATE") between :I_FR_DATE AND :I_TO_DATE
+		    group by t2.companyname, t3.region
+		) where scnt_dense_rank < 6;
+
+END;

@@ -1,0 +1,32 @@
+PROCEDURE "CHECKORDEREMP"(out ET_EMPLOYEE_CNT table(
+	FULLNAME NVARCHAR(265),
+	CREATE_CNT INTEGER,
+	CHANGE_CNT INTEGER,
+	TOTAL_CNT INTEGER
+) )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+   
+     SO_CREATE_CNT = select count(*) as CREATE_CNT, "HISTORY.CREATEDBY.EMPLOYEEID" as EID
+   from "Transaction.SalesOrder" where SALESORDERID IN ( SELECT "HEADER.SALESORDERID" from "Transaction.SalesOrderItems" where 
+														"PRODUCT.PRODUCTID" IS NOT NULL )
+														group by "HISTORY.CREATEDBY.EMPLOYEEID";
+   
+   SO_CHANGE_CNT = select count(*) as CHANGE_CNT, "HISTORY.CHANGEDBY.EMPLOYEEID" as EID
+   from "Transaction.SalesOrder" where SALESORDERID IN ( SELECT "HEADER.SALESORDERID" from "Transaction.SalesOrderItems" where 
+														"PRODUCT.PRODUCTID" IS NOT NULL )
+														group by "HISTORY.CHANGEDBY.EMPLOYEEID";
+   
+   ET_EMPLOYEE_CNT = select "GETNAME"(emp."NAME.FIRST", emp."NAME.MIDDLE", emp."NAME.LAST") as FULLNAME, crt.CREATE_CNT, chg.CHANGE_CNT,
+											crt.CREATE_CNT + chg.CHANGE_CNT as TOTAL_CNT
+											from "MasterData.Employee" as emp 
+											LEFT OUTER JOIN :SO_CREATE_CNT as crt
+											on emp.EMPLOYEEID = crt.EID
+											LEFT OUTER JOIN :SO_CHANGE_CNT as chg
+											on emp.EMPLOYEEID = chg.EID
+											order by TOTAL_CNT desc limit 3;
+   
+END

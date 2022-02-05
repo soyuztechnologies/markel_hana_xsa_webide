@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:Variable="http://www.sap.com/ndb/BiModelVariable.ecore" id="CV_SALES_RANK" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="CV_SALES_RANK"/>
+<localVariables>
+  <variable id="I_FR_DATE" parameter="true">
+    <descriptions defaultDescription=" "/>
+    <variableProperties datatype="DATE" length="0">
+      <valueDomain type="empty"/>
+      <selection/>
+    </variableProperties>
+  </variable>
+  <variable id="I_TO_DATE" parameter="true">
+    <descriptions defaultDescription=" "/>
+    <variableProperties datatype="DATE" length="0">
+      <valueDomain type="empty"/>
+      <selection/>
+    </variableProperties>
+  </variable>
+  <variable id="I_REGION" parameter="true">
+    <descriptions defaultDescription=" "/>
+    <variableProperties datatype="NVARCHAR" length="4">
+      <valueDomain type="empty"/>
+      <selection/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings>
+  <mapping xsi:type="Variable:VariableMapping" dataSource="SalesTransactionRank">
+    <targetVariable name="I_FR_DATE" resourceUri="SalesTransactionRank"/>
+    <localVariable>I_FR_DATE</localVariable>
+  </mapping>
+  <mapping xsi:type="Variable:VariableMapping" dataSource="SalesTransactionRank">
+    <targetVariable name="I_TO_DATE" resourceUri="SalesTransactionRank"/>
+    <localVariable>I_TO_DATE</localVariable>
+  </mapping>
+  <mapping xsi:type="Variable:VariableMapping" dataSource="SalesTransactionRank">
+    <targetVariable name="I_REGION" resourceUri="SalesTransactionRank"/>
+    <localVariable>I_REGION</localVariable>
+  </mapping>
+</variableMappings>
+<dataSources>
+  <DataSource id="SalesTransactionRank" type="TABLE_FUNCTION">
+    <resourceUri>SalesTransactionRank</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews/>
+<logicalModel id="SalesTransactionRank">
+  <attributes>
+    <attribute id="COMPANYNAME" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="COMPANYNAME"/>
+      <keyMapping columnObjectName="SalesTransactionRank" columnName="COMPANYNAME"/>
+    </attribute>
+    <attribute id="REGION" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REGION"/>
+      <keyMapping columnObjectName="SalesTransactionRank" columnName="REGION"/>
+    </attribute>
+    <attribute id="SCNT_RANK" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SCNT_RANK"/>
+      <keyMapping columnObjectName="SalesTransactionRank" columnName="SCNT_RANK"/>
+    </attribute>
+    <attribute id="SCNT_DENSE_RANK" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SCNT_DENSE_RANK"/>
+      <keyMapping columnObjectName="SalesTransactionRank" columnName="SCNT_DENSE_RANK"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures>
+    <measure id="ORD_COUNT" order="3" aggregationType="sum" measureType="simple">
+      <descriptions defaultDescription="ORD_COUNT"/>
+      <measureMapping columnObjectName="SalesTransactionRank" columnName="ORD_COUNT"/>
+    </measure>
+  </baseMeasures>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+  <localDimensions/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

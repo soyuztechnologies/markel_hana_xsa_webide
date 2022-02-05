@@ -1,0 +1,10 @@
+host = "api.covid19api.com";
+port = 443;
+//All of the following keywords are optional
+description = "Covid 19 api consume";   
+pathPrefix = "/dayone/country/india/status/confirmed";
+proxyType = none;
+useSSL = true;
+proxyHost = "proxy"; //in-line comments are allowed
+proxyPort = 8080;
+timeout = 600;

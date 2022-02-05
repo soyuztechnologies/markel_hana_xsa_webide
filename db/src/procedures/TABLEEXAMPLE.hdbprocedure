@@ -1,0 +1,48 @@
+PROCEDURE "TABLEEXAMPLE"(out ET_PRODUCTS table(PRODUCTID NVARCHAR(10),
+												CATEGORY NVARCHAR(20),
+												PRICE DECIMAL(15,2)),
+						out EV_PRODUCTID nvarchar(10)
+)
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+
+	declare lt_products table like :ET_PRODUCTS;
+	declare lv_index integer = 0;
+	declare lv_del_index integer array;
+	declare lv_array_index integer = 0;
+	
+	/*declare exit handler for sqlexception
+	ET_MESSAGE = select ::sql_error_code as err_code, ::sql_error_message as error_msg
+	from "MasterData.dummy";*/
+	
+	lt_products = SELECT PRODUCTID, CATEGORY, PRICE from "MasterData.Product";
+	--Append Lines of itab to jtab.
+	:ET_PRODUCTS.insert(:lt_products);
+	--Insert wa to itab index n.
+	:ET_PRODUCTS.insert(('M-98','Safty Products','1999.99'), 1);
+	:ET_PRODUCTS.insert(('TC-CH','Safty Products','2999.99'), 2);
+	:ET_PRODUCTS.insert(('PS-70','Safty Products','3999.99'), 3);
+	
+	--LOOP AT itab INTO wa
+	for lv_index IN 1..record_count(:ET_PRODUCTS) do
+		:ET_PRODUCTS.(PRICE).UPDATE((:ET_PRODUCTS.PRICE[lv_index] * 1.18), lv_index);
+	end for;
+	--LOOP AT itab INTO wa
+	for lv_index IN 1..record_count(:ET_PRODUCTS) do
+		if :et_products.price[:lv_index] <= 2500 then
+			lv_array_index = lv_array_index + 1;
+			lv_del_index[lv_array_index] = lv_index;
+		end if;
+	end for;
+	
+	--delete itab where cond
+	:et_products.delete(:lv_del_index);
+	
+	--read table itab into wa with key
+	lv_index = :et_products.search("CATEGORY", 'PC',1);
+	EV_PRODUCTID = :et_products.PRODUCTID[:lv_index];
+
+END

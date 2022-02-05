@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@sap/xsenv": "^3",
+    "@sap/xsjs": "^6",
+    "node-xlsx": "latest"
+  },
+  "description": "My XSJS Services",
+  "devDependencies": {
+    "@sap/xsjs-test": "^3"
+  },
+  "files": [],
+  "main": "server.js",
+  "name": "srv",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node testrun.js"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "version": "1.0.0"
+}

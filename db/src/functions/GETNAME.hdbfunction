@@ -1,0 +1,16 @@
+FUNCTION "GETNAME"(
+	im_first nvarchar(40),
+	im_middle nvarchar(40),
+	im_last nvarchar(40) )
+       RETURNS es_fullname varchar(265)
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN 
+    
+    if :im_middle is null then
+    	es_fullname = :im_first || ',' || :im_last;
+    else
+    	es_fullname = :im_first || ' ' || :im_middle || ',' || :im_last;
+    end if;
+    
+END;

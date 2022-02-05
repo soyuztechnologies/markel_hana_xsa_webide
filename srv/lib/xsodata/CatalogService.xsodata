@@ -1,0 +1,14 @@
+service{
+
+   "MasterData.Partner" as "BusinessPartnerSet";
+  
+   "Transaction.PurchaseOrder" as "PurchaseOrderSet" navigates ("Items" as "POrderItems") ;
+	  
+	"Transaction.PurchaseOrderItems" 
+	  as "POrderItems"  ;
+	  
+
+	association "Items" principal  "PurchaseOrderSet"("PURCHASEORDERID")
+	multiplicity "1" dependent "POrderItems"("HEADER.PURCHASEORDERID") multiplicity "*";
+	
+}

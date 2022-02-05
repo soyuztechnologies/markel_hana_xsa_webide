@@ -13,6 +13,35 @@ modules:
     path: db
     requires:
       - name: hdi_db
+        properties:
+          TARGET_CONTAINER: '~{hdi-container-name}'
+      - name: hdi_db2
+        group: SERVICE_REPLACEMENTS
+        properties:
+          key: anubhav-user-container2
+          service: '~{hdi-container-name_2}'
+      - name: cross-container-service-1
+        group: SERVICE_REPLACEMENTS
+        properties:
+          key: ServiceName_1
+          service: '~{the-service-name}'
+      - name: db2
+  - name: srv
+    type: nodejs
+    path: srv
+    provides:
+      - name: srv_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: hdi_db
+      - name: EXTERNAL_HTTP_SERVICE
+      - name: anubhavxsa-uaa
+  - name: web
+    type: html5
+    path: web
+    requires:
+      - name: anubhavxsa-uaa
 resources:
   - name: hdi_db
     properties:
@@ -22,3 +51,19 @@ resources:
     properties:
       hdi-container-name_2: '${service-name}'
     type: com.sap.xs.hdi-container
+  - name: cross-container-service-1
+    parameters:
+      service-name: anubhav_ups_sfly
+    properties:
+      the-service-name: '${service-name}'
+    type: org.cloudfoundry.existing-service
+  - name: EXTERNAL_HTTP_SERVICE
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: xsjs.covidtest
+    properties:
+      EXTERNAL_HTTP_SERVICE: '${service-name}'
+  - name: anubhavxsa-uaa
+    type: com.sap.xs.uaa-devuser
+    parameters:
+      service-name: anubhavxsa-uaa

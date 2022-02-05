@@ -1,0 +1,10 @@
+{
+	"anubhav-user-container2": {
+		"object_owner": {
+			"container_roles": [ "UserOnwer#" ]
+		},
+		"application_user": {
+			"container_roles": [ "User" ]
+		}
+	}
+}

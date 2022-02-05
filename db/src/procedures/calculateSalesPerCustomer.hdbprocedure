@@ -1,0 +1,25 @@
+PROCEDURE "calculateSalesPerCustomer"(out et_cust_sales table(customer_name varchar(90), 
+															  total_sales decimal(15,2),
+															  currency_code nvarchar(4)
+) )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+	--implicit table
+	lt_products = select PRODUCTID from "MasterData.Product" where category = 'Notebooks';
+	
+	lt_items = select "HEADER.SALESORDERID" as OrderId, sum(GROSSAMOUNT) as total_sales,
+					  currency as currency_code from "Transaction.SalesOrderItems" where "PRODUCT.PRODUCTID" in
+					  (select productid from :lt_products) group by "HEADER.SALESORDERID", currency;
+	
+	lt_orders = select "PARTNER.PARTNERID" as PartnerId, sum(item.total_sales) as total_sales, item.currency_code
+				from "Transaction.SalesOrder" as so
+		inner join :lt_items as item on so."SALESORDERID" = item.OrderId group by "PARTNER.PARTNERID", item.currency_code;
+		
+		
+	et_cust_sales = select 	pr.companyname as customer_name, total_sales, so.currency_code from "MasterData.Partner" as pr inner join
+					:lt_orders as so on pr.PARTNERID = SO.PartnerId;
+	
+END

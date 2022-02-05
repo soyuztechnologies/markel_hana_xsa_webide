@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="CV_PURCHASE_ORDERS" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="CV_PURCHASE_ORDERS"/>
+<localVariables>
+  <variable id="IM_CURR" parameter="true">
+    <descriptions defaultDescription="Currency Code to Be Converted"/>
+    <variableProperties datatype="NVARCHAR" length="4" mandatory="true">
+      <valueDomain type="Currency"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="Transaction.PurchaseOrderItems">
+    <resourceUri>Transaction.PurchaseOrderItems</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="POItems">
+    <viewAttributes>
+      <viewAttribute id="HEADER_PURCHASEORDERID"/>
+      <viewAttribute id="PURCHASEORDERITEM"/>
+      <viewAttribute id="PRODUCT_PRODUCTID"/>
+      <viewAttribute id="CURRENCY"/>
+      <viewAttribute id="GROSSAMOUNT"/>
+      <viewAttribute id="QUANTITY"/>
+      <viewAttribute id="QUANTITYUNIT"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Transaction.PurchaseOrderItems">
+      <mapping xsi:type="Calculation:AttributeMapping" target="HEADER_PURCHASEORDERID" source="HEADER.PURCHASEORDERID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRODUCT_PRODUCTID" source="PRODUCT.PRODUCTID"/>
+    </input>
+  </calculationView>
+</calculationViews>
+<logicalModel id="POItems">
+  <attributes>
+    <attribute id="HEADER_PURCHASEORDERID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="HEADER_PURCHASEORDERID"/>
+      <keyMapping columnObjectName="POItems" columnName="HEADER_PURCHASEORDERID"/>
+    </attribute>
+    <attribute id="PURCHASEORDERITEM" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PURCHASEORDERITEM"/>
+      <keyMapping columnObjectName="POItems" columnName="PURCHASEORDERITEM"/>
+    </attribute>
+    <attribute id="PRODUCT_PRODUCTID" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PRODUCT_PRODUCTID"/>
+      <keyMapping columnObjectName="POItems" columnName="PRODUCT_PRODUCTID"/>
+    </attribute>
+    <attribute id="CURRENCY_1" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CURRENCY"/>
+      <keyMapping columnObjectName="POItems" columnName="CURRENCY"/>
+    </attribute>
+    <attribute id="QUANTITYUNIT" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="QUANTITYUNIT"/>
+      <keyMapping columnObjectName="POItems" columnName="GROSSAMOUNT"/>
+    </attribute>
+    <attribute id="PRODUCT_PRODUCTID$local">
+      <descriptions defaultDescription="PRODUCT_PRODUCTID"/>
+      <keyMapping columnObjectName="POItems" columnName="PRODUCT_PRODUCTID"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures>
+    <measure id="GROSSAMOUNT" order="5" semanticType="amount" aggregationType="sum" measureType="amount" unconverted="false">
+      <descriptions defaultDescription="GROSSAMOUNT"/>
+      <unitCurrencyAttribute attributeName="GROSSAMOUNT_CURRENCY"/>
+      <currencyConversion errorHandling="keepUnconverted" generateOutputUnitCurrencyAttribute="true" outputUnitCurrencyAttributeName="GROSSAMOUNT_CURRENCY" convert="true" accuracy="COMPATIBILITY" method="ERP" lookup="REGULAR">
+        <client>
+          <value>001</value>
+        </client>
+        <currencyConversionTables rates="TCURR" configuration="TCURV" prefactors="TCURF" notations="TCURN" precisions="TCURX"/>
+        <outputDataType datatype="DECIMAL" length="15" scale="2"/>
+        <sourceCurrency>
+          <attribute attributeName="CURRENCY_1"/>
+        </sourceCurrency>
+        <erpDecimalShift>true</erpDecimalShift>
+        <targetCurrency>
+          <localVariable>IM_CURR</localVariable>
+        </targetCurrency>
+        <referenceDate>
+          <value>20201019</value>
+        </referenceDate>
+        <exchangeRateType>1001</exchangeRateType>
+      </currencyConversion>
+      <measureMapping columnObjectName="POItems" columnName="GROSSAMOUNT"/>
+    </measure>
+    <measure id="QUANTITY" order="6" aggregationType="sum" measureType="simple">
+      <descriptions defaultDescription="QUANTITY"/>
+      <measureMapping columnObjectName="POItems" columnName="QUANTITY"/>
+    </measure>
+    <measure id="OriginalGrossAmount" order="8" aggregationType="sum" measureType="simple">
+      <descriptions defaultDescription="OriginalAmount"/>
+      <measureMapping columnObjectName="POItems" columnName="GROSSAMOUNT"/>
+    </measure>
+  </baseMeasures>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+  <localDimensions/>
+  <sharedDimensions>
+    <logicalJoin associatedObjectUri="CV_PRODUCT">
+      <attributes>
+        <attributeRef>PRODUCT_PRODUCTID$local</attributeRef>
+      </attributes>
+      <associatedAttributeNames>
+        <attributeName>PRODUCTID</attributeName>
+      </associatedAttributeNames>
+      <properties cardinality="C1_1" joinType="referential" joinOperator="Equal"/>
+      <associatedAttributeFeatures/>
+    </logicalJoin>
+  </sharedDimensions>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="POItems" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="100" y="227"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="POItems" modelObjectNameSpace="StarJoinViewNodeInput" modelObjectType="repository">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="CV_PRODUCT" modelObjectNameSpace="StarJoinViewNodeSharedCV" modelObjectType="repository">
+      <upperLeftCorner x="419" y="22"/>
+      <rectangleSize width="284"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

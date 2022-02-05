@@ -1,0 +1,80 @@
+library "masterdatalib"
+language sqlscript as
+begin
+
+public variable rowcount int;
+--The function will return row count variable @ library level, should be
+-- called only after get_employee_data procedure
+public function "check_rowcount"()
+returns rowcnt integer
+as begin
+	rowcnt = rowcount;
+end;
+--check if employee exist by emp id
+public function "employee_exist"(
+	in i_empid integer
+) returns res boolean as
+begin
+	declare lv_count int;
+	select count(*) into lv_count from "MasterData.Employee"
+	where employeeID = i_empid;
+	if lv_count > 0 then
+		res = true;
+	else
+		res = false;
+	end if;
+end;
+--get employee data, returns a table of type Employees and set rowcount
+public procedure "get_employee_data"(
+	in iv_empid integer,
+	out et_employees "MasterData.Employee"
+) language sqlscript sql security invoker
+as begin
+	
+	if(:iv_empid is null) then
+		et_employees = select * from "MasterData.Employee";
+	else
+		et_employees = select * from "MasterData.Employee" where employeeid = :iv_empid;
+	end if;
+	rowcount = record_count(:et_employees);
+
+end;
+
+public procedure "create_employee"(i_empid integer, i_fullname nvarchar(255),
+	i_sex nvarchar(1), i_phone nvarchar(30),
+	i_email nvarchar(30), i_loginname nvarchar(30),
+	i_salary decimal(10,2), i_acno nvarchar(10)
+)
+language sqlscript sql security invoker as begin
+
+declare lv_fn, lv_ln nvarchar(40);
+declare lv_exist boolean;
+lv_fn := substr_before(:i_fullname,' ');
+lv_ln := substr_after(:i_fullname,' ');
+lv_exist = "employee_exist"(:i_empid);
+
+if ( lv_exist = false) then
+
+INSERT INTO "MasterData.Employee" VALUES(
+	i_empid,
+	lv_fn/*NAME.FIRST <NVARCHAR(40)>*/,
+	''/*NAME.MIDDLE <NVARCHAR(40)>*/,
+	lv_ln/*NAME.LAST <NVARCHAR(40)>*/,
+	''/*NAME.INITIALS <NVARCHAR(10)>*/,
+	i_sex/*SEX <NVARCHAR(1)>*/,
+	'E'/*LANGUAGE <NVARCHAR(1)>*/,
+	i_phone/*PHONENUMBER <NVARCHAR(30)>*/,
+	i_email/*EMAILADDRESS <NVARCHAR(255)>*/,
+	i_loginname/*LOGINNAME <NVARCHAR(12)>*/,
+	'USD'/*CURRENCY <NVARCHAR(5)>*/,
+	i_salary/*SALARYAMOUNT <DECIMAL>*/,
+	i_acno/*ACCOUNTNUMBER <NVARCHAR(10)>*/,
+	0
+);
+
+end if;
+
+end;
+
+
+end;

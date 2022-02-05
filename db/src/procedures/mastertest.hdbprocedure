@@ -1,0 +1,19 @@
+PROCEDURE "mastertest"(
+	in i_empid integer,
+	in i_fullname nvarchar(255),
+	out et_result "MasterData.Employee" )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   AS
+BEGIN
+   --create object of a class
+   using "masterdatalib" as MyLibReuse;
+   
+   call MyLibReuse:"create_employee"(:i_empid, :i_fullname, 'M', '9898989774',
+   								'suryademodatya@gmail.com', 'SURYAD', 8500, 'S0000852'
+   );
+   
+   call MyLibReuse:"get_employee_data"(36, et_result);
+   
+END
